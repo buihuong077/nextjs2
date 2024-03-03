@@ -7,9 +7,14 @@ function Tablepet(props: any) {
     // console.log("index", index);
     const pet1 = props.listPets[index]; // lay pet thong qua vi tri index
     // console.log("pet1", pet1, pet1._id);
-    props.setPetEdit(pet1);
+    props.setPet(pet1);
   };
 
+  const handleDeletePet = (index: any) => {
+    const petDelete = props.listPets[index];
+
+    props.deletePet(petDelete._id);
+  };
   return (
     <div className="mt-10">
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -63,6 +68,17 @@ function Tablepet(props: any) {
                       className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                     >
                       Edit
+                    </button>
+                  </td>
+                  <td className="px-6 py-4">
+                    <button
+                      onClick={() => {
+                        handleDeletePet(index);
+                      }}
+                      // href="http://localhost:3000/edit"
+                      className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                    >
+                      Delete
                     </button>
                   </td>
                 </tr>

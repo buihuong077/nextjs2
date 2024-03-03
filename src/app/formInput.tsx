@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import Tablepet from "./table";
 
 export interface Pets {
+  _id?: string;
   name: string;
   age: string;
   weight: string;
@@ -13,10 +14,16 @@ export interface Pets {
 }
 function FormInput() {
   // pet laf object chua thong tin 1 con pet, setpet la 1 function de dat gia tri moi cho pet
-  const [pet, setPet] = useState<Pets>({} as Pets); // as pets
+  const [pet, setPet] = useState<Pets>({
+    name: "",
+    age: "",
+    weight: "",
+    height: "",
+    type: "",
+  }); // as pets
   const [listPets, setListPet] = useState<Pets[]>([]);
   const [showAddPet, setShowAddPet] = useState(false);
-  const [petEdit, setPetEdit] = useState();
+
   const [errorName, setErrorName] = useState("");
   const [errorAge, setErrorAge] = useState("");
   const [errorWeight, setErrorWeight] = useState("");
@@ -44,15 +51,35 @@ function FormInput() {
     setListPet(res.data);
   };
 
-  const handleAddPet = () => {
-    postPet();
+  const putPet = async () => {
+    const res = await axios.put(`${BaseUrl}/pets/${pet?._id}`, {
+      name: pet.name,
+      age: pet.age,
+      weight: pet.weight,
+      height: pet.height,
+      type: pet.type,
+    });
+
+    getPet();
     setPet({} as Pets);
   };
+  const handleAddPet = () => {
+    if (pet?._id) {
+      putPet();
+    } else {
+      postPet();
+      setPet({} as Pets);
+    }
+  };
 
+  const deletePet = async (_id: string) => {
+    const res = await axios.delete(`${BaseUrl}/pets/${_id}`);
+    getPet();
+  };
   const handleShowFromAddPet = () => {
     setShowAddPet(!showAddPet);
   };
-  console.log("petEdit", petEdit, pet);
+  console.log("petEdit", pet._id);
 
   return (
     <div>
@@ -164,7 +191,7 @@ function FormInput() {
                 }}
                 className="h-13 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               >
-                <option value="SelectType">Select Type</option>
+                <option value="">Select Type</option>
                 <option value="Dog">Dog</option>
                 <option value="Cat">Cat</option>
               </select>
@@ -190,8 +217,8 @@ function FormInput() {
       <Tablepet
         listPets={listPets}
         setShowAddPet={setShowAddPet}
-        petEdit={petEdit}
-        setPetEdit={setPetEdit}
+        setPet={setPet}
+        deletePet={deletePet}
       />
     </div>
   );
